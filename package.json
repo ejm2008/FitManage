@@ -1,11 +1,15 @@
 {
   "name": "fitmanage",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "concurrently -n \"API,WEB\" -c \"blue,green\" \"npm --prefix server run dev\" \"vite\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "vite",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "npm --prefix server run build",
+    "build:client": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -13,6 +17,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"

@@ -13,8 +13,8 @@ export interface Student {
   id: string;
   name: string;
   age: number;
-  weight: number; // em kg
-  height: number; // em cm
+  weight: number; // kg
+  height: number; // cm
   goal: StudentGoal;
   level: StudentLevel;
   phone?: string;
@@ -41,8 +41,8 @@ export interface Exercise {
 export interface Workout {
   id: string;
   studentId: string;
-  name: string; // Ex: Treino A - Peito e Tríceps
-  division: string; // A, B, C, D, Full Body
+  name: string;
+  division: string;
   targetMuscles: string;
   notes?: string;
   exercises: Exercise[];
@@ -53,7 +53,7 @@ export interface Workout {
 export interface MealItem {
   id: string;
   name: string;
-  portion: string; // Ex: 150g, 3 ovos, 1 scoop (30g)
+  portion: string;
   calories?: number;
   proteinG?: number;
   notes?: string;
@@ -61,8 +61,8 @@ export interface MealItem {
 
 export interface Meal {
   id: string;
-  name: string; // Ex: Café da Manhã, Almoço, Lanche da Tarde
-  time: string; // Ex: 07:30
+  name: string;
+  time: string;
   items: MealItem[];
   notes?: string;
 }
@@ -86,4 +86,10 @@ export interface DatabaseState {
   students: Student[];
   workouts: Workout[];
   diets: DietPlan[];
+}
+
+export interface AuthUser {
+  username: string;
+  role: string;
+  loginTime: string;
 }

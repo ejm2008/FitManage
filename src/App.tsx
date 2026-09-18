@@ -1,17 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Student, StudentLevel, StudentGoal, Workout, DietPlan } from './types';
 import { storageService } from './services/storageService';
+import { authService, AuthUser } from './services/authService';
 import { Navbar } from './components/Navbar';
 import { DashboardStats } from './components/DashboardStats';
 import { StudentCard } from './components/StudentCard';
 import { StudentModal } from './components/StudentModal';
 import { StudentProfile } from './components/StudentProfile';
+import { LoginScreen } from './components/LoginScreen';
 import { Search, UserPlus, Filter, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const App: React.FC = () => {
+  // Estado de Autenticação via Cookie
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => authService.getCurrentUser());
+
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [profileTab, setProfileTab] = useState<'overview' | 'workouts' | 'diet'>('overview');
+  const [currentWorkouts, setCurrentWorkouts] = useState<Workout[]>([]);
+  const [currentDiet, setCurrentDiet] = useState<DietPlan | undefined>(undefined);
   
   // Modais e edição
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
@@ -26,20 +33,49 @@ export const App: React.FC = () => {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
   // Carregar dados na inicialização
-  const refreshData = () => {
-    const list = storageService.getStudents();
-    setStudents([...list]);
+  const refreshData = async () => {
+    try {
+      const list = await storageService.getStudents();
+      setStudents([...list]);
+
+      // Se houver aluno selecionado, atualiza seus treinos e dieta
+      if (selectedStudentId) {
+        const [wList, dPlan] = await Promise.all([
+          storageService.getWorkoutsByStudent(selectedStudentId),
+          storageService.getDietByStudent(selectedStudentId),
+        ]);
+        setCurrentWorkouts(wList);
+        setCurrentDiet(dPlan);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar dados da API:', err);
+    }
   };
 
   useEffect(() => {
-    refreshData();
-  }, []);
+    if (currentUser) {
+      refreshData();
+    }
+  }, [currentUser, selectedStudentId]);
 
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
     }, 3500);
+  };
+
+  const handleLoginSuccess = (user: AuthUser) => {
+    setCurrentUser(user);
+    refreshData();
+    showToast(`Bem-vindo ao FitManage, ${user.username}!`, 'success');
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setCurrentUser(null);
+    setSelectedStudentId(null);
+    showToast('Sessão encerrada com sucesso.', 'info');
   };
 
   const selectedStudent = useMemo(() => {
@@ -63,12 +99,12 @@ export const App: React.FC = () => {
   }, [students, searchTerm, levelFilter, goalFilter]);
 
   // Contadores globais
-  const allWorkouts = useMemo(() => {
-    return students.flatMap((s) => storageService.getWorkoutsByStudent(s.id));
+  const totalWorkoutsCount = useMemo(() => {
+    return students.reduce((sum, s) => sum + (s.workoutCount || 0), 0);
   }, [students]);
 
-  const allDietsCount = useMemo(() => {
-    return students.filter((s) => !!storageService.getDietByStudent(s.id)).length;
+  const totalDietsCount = useMemo(() => {
+    return students.filter((s) => s.hasDiet).length;
   }, [students]);
 
   // Handlers para Aluno
@@ -82,101 +118,152 @@ export const App: React.FC = () => {
     setIsStudentModalOpen(true);
   };
 
-  const handleSaveStudent = (
+  const handleSaveStudent = async (
     studentData: Omit<Student, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }
   ) => {
-    const saved = storageService.saveStudent(studentData);
-    refreshData();
-    setIsStudentModalOpen(false);
-    showToast(
-      studentData.id
-        ? `Cadastro de ${saved.name} atualizado com sucesso!`
-        : `Aluno ${saved.name} cadastrado com sucesso!`
-    );
-  };
-
-  const handleDeleteStudent = (id: string, name: string) => {
-    if (confirm(`Tem certeza que deseja excluir o aluno "${name}" e todos os seus treinos e dietas?`)) {
-      storageService.deleteStudent(id);
-      if (selectedStudentId === id) {
-        setSelectedStudentId(null);
-      }
-      refreshData();
-      showToast(`Aluno "${name}" excluído.`, 'info');
+    try {
+      const saved = await storageService.saveStudent(studentData);
+      await refreshData();
+      setIsStudentModalOpen(false);
+      showToast(
+        studentData.id
+          ? `Cadastro de ${saved.name} atualizado!`
+          : `Aluno ${saved.name} cadastrado com sucesso!`
+      );
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao salvar aluno.', 'error');
     }
   };
 
-  const handleSelectStudent = (
+  const handleDeleteStudent = async (id: string, name: string) => {
+    if (confirm(`Tem certeza que deseja excluir o aluno "${name}" e todos os seus treinos e dietas?`)) {
+      try {
+        await storageService.deleteStudent(id);
+        if (selectedStudentId === id) {
+          setSelectedStudentId(null);
+        }
+        await refreshData();
+        showToast(`Aluno "${name}" excluído.`, 'info');
+      } catch (err: any) {
+        showToast(err.message || 'Erro ao excluir aluno.', 'error');
+      }
+    }
+  };
+
+  const handleSelectStudent = async (
     student: Student,
     defaultTab: 'overview' | 'workouts' | 'diet' = 'overview'
   ) => {
     setSelectedStudentId(student.id);
     setProfileTab(defaultTab);
+    try {
+      const [wList, dPlan] = await Promise.all([
+        storageService.getWorkoutsByStudent(student.id),
+        storageService.getDietByStudent(student.id),
+      ]);
+      setCurrentWorkouts(wList);
+      setCurrentDiet(dPlan);
+    } catch (err) {
+      console.error(err);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handlers para Treinos
-  const handleSaveWorkout = (
+  const handleSaveWorkout = async (
     workout: Omit<Workout, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }
   ) => {
-    storageService.saveWorkout(workout);
-    refreshData();
-    showToast('Treino salvo com sucesso!');
+    try {
+      await storageService.saveWorkout(workout);
+      await refreshData();
+      showToast('Treino salvo com sucesso!');
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao salvar treino.', 'error');
+    }
   };
 
-  const handleDeleteWorkout = (workoutId: string) => {
-    storageService.deleteWorkout(workoutId);
-    refreshData();
-    showToast('Treino excluído com sucesso.', 'info');
+  const handleDeleteWorkout = async (workoutId: string) => {
+    try {
+      await storageService.deleteWorkout(workoutId);
+      await refreshData();
+      showToast('Treino excluído com sucesso.', 'info');
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao excluir treino.', 'error');
+    }
   };
 
   // Handlers para Dietas
-  const handleSaveDiet = (
+  const handleSaveDiet = async (
     diet: Omit<DietPlan, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }
   ) => {
-    storageService.saveDiet(diet);
-    refreshData();
-    showToast('Plano nutricional atualizado!');
+    try {
+      await storageService.saveDiet(diet);
+      await refreshData();
+      showToast('Plano nutricional atualizado!');
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao salvar dieta.', 'error');
+    }
   };
 
-  const handleDeleteDiet = (studentId: string) => {
-    storageService.deleteDiet(studentId);
-    refreshData();
-    showToast('Dieta excluída com sucesso.', 'info');
+  const handleDeleteDiet = async (studentId: string) => {
+    try {
+      await storageService.deleteDiet(studentId);
+      await refreshData();
+      showToast('Dieta excluída com sucesso.', 'info');
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao excluir dieta.', 'error');
+    }
   };
 
   // Handlers de dados mockados (Reset / Backup)
-  const handleResetData = () => {
-    if (confirm('Deseja restaurar a base de dados para o padrão de demonstração? Seus novos registros serão substituídos pelos exemplos.')) {
-      storageService.resetToDefault();
-      setSelectedStudentId(null);
-      refreshData();
-      showToast('Dados de demonstração restaurados!', 'success');
+  const handleResetData = async () => {
+    if (confirm('Deseja restaurar a base de dados para o padrão de demonstração?')) {
+      try {
+        await storageService.resetToDefault();
+        setSelectedStudentId(null);
+        await refreshData();
+        showToast('Dados de demonstração restaurados no servidor!', 'success');
+      } catch (err: any) {
+        showToast(err.message || 'Erro ao restaurar dados.', 'error');
+      }
     }
   };
 
-  const handleExportData = () => {
-    const jsonStr = storageService.exportDatabaseJson();
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `fitmanage_backup_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    showToast('Backup exportado com sucesso!');
-  };
-
-  const handleImportData = (jsonString: string) => {
-    const success = storageService.importDatabaseJson(jsonString);
-    if (success) {
-      setSelectedStudentId(null);
-      refreshData();
-      showToast('Dados restaurados com sucesso a partir do arquivo!', 'success');
-    } else {
-      showToast('Falha ao importar: arquivo JSON inválido ou incompatível.', 'error');
+  const handleExportData = async () => {
+    try {
+      const jsonStr = await storageService.exportDatabaseJson();
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `fitmanage_backup_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup exportado da API com sucesso!');
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao exportar dados.', 'error');
     }
   };
+
+  const handleImportData = async (jsonString: string) => {
+    try {
+      const success = await storageService.importDatabaseJson(jsonString);
+      if (success) {
+        setSelectedStudentId(null);
+        await refreshData();
+        showToast('Dados restaurados na API com sucesso!', 'success');
+      } else {
+        showToast('Falha ao importar: arquivo JSON inválido ou incompatível.', 'error');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao importar arquivo.', 'error');
+    }
+  };
+
+  // Se o usuário não estiver autenticado pelo cookie, exibe a tela de login
+  if (!currentUser) {
+    return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -204,6 +291,8 @@ export const App: React.FC = () => {
 
       {/* Barra de Navegação Superior */}
       <Navbar
+        currentUser={currentUser}
+        onLogout={handleLogout}
         onNewStudent={handleOpenNewStudent}
         onGoHome={() => setSelectedStudentId(null)}
         onResetData={handleResetData}
@@ -217,8 +306,8 @@ export const App: React.FC = () => {
           /* Visualização da Ficha Completa do Aluno */
           <StudentProfile
             student={selectedStudent}
-            workouts={storageService.getWorkoutsByStudent(selectedStudent.id)}
-            dietPlan={storageService.getDietByStudent(selectedStudent.id)}
+            workouts={currentWorkouts}
+            dietPlan={currentDiet}
             initialTab={profileTab}
             onBack={() => setSelectedStudentId(null)}
             onEditStudent={handleOpenEditStudent}
@@ -236,13 +325,13 @@ export const App: React.FC = () => {
               <div className="relative z-10 max-w-2xl">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold mb-3">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Painel do Instrutor • Acesso Direto</span>
+                  <span>FitManage Full Stack • Conectado como {currentUser.username}</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                   Gestão Inteligente de Alunos & Prescrições
                 </h1>
                 <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-                  Cadastre novos alunos com dados biométricos, calcule automaticamente o IMC e estruture fichas personalizadas de treinos e dietas.
+                  Cadastre novos alunos com dados biométricos, calcule automaticamente o IMC e estruture fichas personalizadas de treinos e dietas via API REST.
                 </p>
               </div>
             </div>
@@ -250,8 +339,8 @@ export const App: React.FC = () => {
             {/* Cards de Métricas */}
             <DashboardStats
               students={students}
-              totalWorkouts={allWorkouts.length}
-              totalDiets={allDietsCount}
+              totalWorkouts={totalWorkoutsCount}
+              totalDiets={totalDietsCount}
               selectedLevelFilter={levelFilter}
               onSelectLevelFilter={setLevelFilter}
             />
@@ -336,14 +425,12 @@ export const App: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filteredStudents.map((student) => {
-                  const studentWorkouts = storageService.getWorkoutsByStudent(student.id);
-                  const hasDiet = !!storageService.getDietByStudent(student.id);
                   return (
                     <StudentCard
                       key={student.id}
                       student={student}
-                      workoutCount={studentWorkouts.length}
-                      hasDiet={hasDiet}
+                      workoutCount={student.workoutCount || 0}
+                      hasDiet={Boolean(student.hasDiet)}
                       onSelect={handleSelectStudent}
                       onEdit={handleOpenEditStudent}
                       onDelete={handleDeleteStudent}
@@ -367,8 +454,15 @@ export const App: React.FC = () => {
       {/* Rodapé do Sistema */}
       <footer className="border-t border-slate-800/80 bg-slate-950/60 py-6 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>FitManage • Sistema de Gestão de Academia (Treinos & Dietas)</span>
-          <span className="text-slate-400">Banco de Dados Mockado Persistente (LocalStorage)</span>
+          <span>FitManage Full Stack • API REST Express & Swagger UI</span>
+          <a
+            href="http://localhost:3001/api-docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-400 hover:underline"
+          >
+            Documentação Swagger (http://localhost:3001/api-docs)
+          </a>
         </div>
       </footer>
     </div>
