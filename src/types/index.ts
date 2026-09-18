@@ -87,3 +87,12 @@ export interface DatabaseState {
   workouts: Workout[];
   diets: DietPlan[];
 }
+
+export type UserRole = 'admin' | 'dev';
+
+export interface AuthUser {
+  username: string;
+  role: UserRole;
+  roleLabel: string;
+  loginTime: string;
+}

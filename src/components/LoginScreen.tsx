@@ -39,8 +39,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleFillDemo = () => {
+  const handleFillAdmin = () => {
     setUsername('admin');
+    setPassword('123456');
+    setErrorMessage('');
+  };
+
+  const handleFillDev = () => {
+    setUsername('dev');
     setPassword('123456');
     setErrorMessage('');
   };
@@ -145,23 +151,37 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             </button>
           </form>
 
-          {/* Banner de Credenciais de Demonstração */}
-          <div className="mt-6 pt-5 border-t border-slate-800/80 text-center">
-            <div className="p-3 bg-slate-950/60 rounded-2xl border border-slate-800/60 text-xs text-slate-400">
-              <p className="font-semibold text-slate-300 mb-1">
-                Credenciais de teste inicial:
-              </p>
-              <div className="flex items-center justify-center gap-3 font-mono text-[11px] text-emerald-400">
-                <span>user: <strong>admin</strong></span>
-                <span>•</span>
-                <span>senha: <strong>123456</strong></span>
-              </div>
+          {/* Banner de Credenciais por Perfil */}
+          <div className="mt-6 pt-5 border-t border-slate-800/80">
+            <p className="text-xs font-semibold text-slate-300 text-center mb-2.5">
+              Selecione um perfil para teste rápido:
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 text-left">
+              {/* Opção Admin */}
               <button
                 type="button"
-                onClick={handleFillDemo}
-                className="mt-2 text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 hover:underline transition-colors block mx-auto"
+                onClick={handleFillAdmin}
+                className="p-2.5 rounded-xl bg-slate-950/70 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 transition-all text-xs group"
               >
-                Preencher credenciais automaticamente
+                <div className="font-bold text-slate-200 group-hover:text-emerald-400 flex items-center justify-between">
+                  <span>👑 Admin</span>
+                  <span className="text-[10px] text-slate-400">123456</span>
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1">Gestão de alunos, treinos e dietas</p>
+              </button>
+
+              {/* Opção Dev */}
+              <button
+                type="button"
+                onClick={handleFillDev}
+                className="p-2.5 rounded-xl bg-cyan-950/20 hover:bg-cyan-950/40 border border-cyan-500/30 hover:border-cyan-400 transition-all text-xs group"
+              >
+                <div className="font-bold text-cyan-300 group-hover:text-cyan-200 flex items-center justify-between">
+                  <span>💻 Dev</span>
+                  <span className="text-[10px] text-cyan-400 font-mono">123456</span>
+                </div>
+                <p className="text-[10px] text-cyan-400/80 mt-1 font-medium">⚡ Swagger API liberado na tela</p>
               </button>
             </div>
           </div>

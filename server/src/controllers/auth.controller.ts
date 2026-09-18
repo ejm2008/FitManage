@@ -17,13 +17,25 @@ export const authController = {
     const cleanUsername = String(username).trim().toLowerCase();
     const cleanPassword = String(password).trim();
 
-    if (cleanUsername === 'admin' && cleanPassword === '123456') {
-      const user: AuthUser = {
+    let user: AuthUser | null = null;
+
+    if (cleanUsername === 'admin' && (cleanPassword === '123456' || cleanPassword === 'admin123')) {
+      user = {
         username: 'admin',
-        role: 'Instrutor Chefe',
+        role: 'admin',
+        roleLabel: 'Administrador',
         loginTime: new Date().toISOString(),
       };
+    } else if (cleanUsername === 'dev' && (cleanPassword === '123456' || cleanPassword === 'dev123')) {
+      user = {
+        username: 'dev',
+        role: 'dev',
+        roleLabel: 'Desenvolvedor (Dev)',
+        loginTime: new Date().toISOString(),
+      };
+    }
 
+    if (user) {
       // Define o cookie de sessão http
       res.cookie(SESSION_COOKIE_NAME, JSON.stringify(user), {
         httpOnly: false, // Permite leitura no frontend para sincronismo
@@ -40,7 +52,7 @@ export const authController = {
 
     return res.status(401).json({
       success: false,
-      error: 'Usuário ou senha inválidos. Utilize: admin / 123456',
+      error: 'Usuário ou senha inválidos. Opções de teste: admin / 123456 ou dev / 123456',
     });
   },
 

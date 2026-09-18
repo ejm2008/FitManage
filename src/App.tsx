@@ -454,15 +454,21 @@ export const App: React.FC = () => {
       {/* Rodapé do Sistema */}
       <footer className="border-t border-slate-800/80 bg-slate-950/60 py-6 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>FitManage Full Stack • API REST Express & Swagger UI</span>
-          <a
-            href="http://localhost:3001/api-docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-400 hover:underline"
-          >
-            Documentação Swagger (http://localhost:3001/api-docs)
-          </a>
+          <span>FitManage Full Stack • API REST Express</span>
+          {currentUser?.role === 'dev' ? (
+            <a
+              href="http://localhost:3001/api-docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:underline font-medium"
+            >
+              Documentação Swagger (Acesso Dev Liberado) ↗
+            </a>
+          ) : (
+            <span className="text-slate-500">
+              Modo Administrador • Swagger exclusivo para Devs
+            </span>
+          )}
         </div>
       </footer>
     </div>

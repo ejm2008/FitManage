@@ -1,12 +1,9 @@
 import { apiRequest } from './apiClient';
+import { AuthUser, UserRole } from '../types';
+
+export type { AuthUser, UserRole };
 
 const SESSION_COOKIE_NAME = 'fitmanage_session';
-
-export interface AuthUser {
-  username: string;
-  role: string;
-  loginTime: string;
-}
 
 export const authService = {
   getCookie(name: string): string | null {

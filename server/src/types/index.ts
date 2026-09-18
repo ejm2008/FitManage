@@ -88,8 +88,11 @@ export interface DatabaseState {
   diets: DietPlan[];
 }
 
+export type UserRole = 'admin' | 'dev';
+
 export interface AuthUser {
   username: string;
-  role: string;
+  role: UserRole;
+  roleLabel: string;
   loginTime: string;
 }

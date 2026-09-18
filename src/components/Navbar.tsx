@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Dumbbell, UserPlus, RotateCcw, Download, Upload, LogOut, ShieldCheck, FileCode2 } from 'lucide-react';
+import { Dumbbell, UserPlus, RotateCcw, Download, Upload, LogOut, ShieldCheck, FileCode2, Terminal } from 'lucide-react';
 import { AuthUser } from '../services/authService';
 
 interface NavbarProps {
@@ -105,17 +105,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* Link para o Swagger UI */}
-            <a
-              href="http://localhost:3001/api-docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Abrir Documentação Interativa da API no Swagger"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800/90 hover:bg-slate-700/90 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/60 rounded-lg text-xs font-semibold transition-all shadow-sm shadow-emerald-950"
-            >
-              <FileCode2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden md:inline">Swagger API</span>
-            </a>
+            {/* Link para o Swagger UI - Apenas Visível para o papel DEV */}
+            {currentUser?.role === 'dev' && (
+              <a
+                href="http://localhost:3001/api-docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Abrir Documentação Interativa da API no Swagger (Apenas Devs)"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 hover:border-cyan-500/70 rounded-lg text-xs font-bold transition-all shadow-sm shadow-cyan-950/40"
+              >
+                <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Swagger API</span>
+                <span className="text-[9px] bg-cyan-400/20 text-cyan-300 px-1 py-0.2 rounded font-mono uppercase">DEV</span>
+              </a>
+            )}
 
             {/* Botão Novo Aluno */}
             <button
@@ -130,11 +133,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             {currentUser && (
               <div className="flex items-center gap-1.5 pl-2 sm:pl-3 border-l border-slate-800">
                 <div 
-                  className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/60 text-xs text-slate-300"
-                  title={`Conectado como ${currentUser.username} (${currentUser.role})`}
+                  className={`hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs ${
+                    currentUser.role === 'dev'
+                      ? 'bg-cyan-950/40 border-cyan-500/30 text-cyan-300'
+                      : 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+                  }`}
+                  title={`Conectado como ${currentUser.username} (${currentUser.roleLabel || currentUser.role})`}
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  {currentUser.role === 'dev' ? (
+                    <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+                  ) : (
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  )}
                   <span className="font-semibold text-white">{currentUser.username}</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full uppercase ${
+                    currentUser.role === 'dev' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-emerald-500/20 text-emerald-400'
+                  }`}>
+                    {currentUser.role}
+                  </span>
                 </div>
 
                 <button
