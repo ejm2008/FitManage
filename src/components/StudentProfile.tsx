@@ -55,7 +55,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
   return (
     <div className="space-y-6">
       {/* Botão Voltar e Ações do Topo */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <button
           onClick={onBack}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 text-xs font-semibold transition-colors"
@@ -74,7 +74,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
           </button>
           <button
             onClick={() => onDeleteStudent(student.id, student.name)}
-            className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/20 transition-colors"
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/20 transition-colors"
             title="Excluir Aluno"
           >
             <Trash2 className="w-4 h-4" />
@@ -83,11 +83,11 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
       </div>
 
       {/* Cartão de Perfil do Aluno */}
-      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-          <div className="flex items-center gap-4">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 pb-6 border-b border-slate-800">
+          <div className="flex items-center gap-3.5 sm:gap-4">
             {/* Avatar com Iniciais */}
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-emerald-950 flex-shrink-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-emerald-950 flex-shrink-0">
               {student.name
                 .split(' ')
                 .slice(0, 2)
@@ -96,41 +96,41 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
                 .toUpperCase()}
             </div>
 
-            <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-2xl font-bold text-white tracking-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold text-white tracking-tight break-words">
                   {student.name}
                 </h1>
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${levelBadge.badgeClass}`}>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${levelBadge.badgeClass}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${levelBadge.dotClass}`} />
                   {levelBadge.label}
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 text-xs text-slate-400 mt-2 flex-wrap">
+              <div className="flex items-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-2 flex-wrap">
                 <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                  <Target className="w-4 h-4" />
+                  <Target className="w-3.5 h-3.5" />
                   {student.goal}
                 </span>
-                <span>•</span>
+                <span className="text-slate-600">•</span>
                 <span className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-slate-500" />
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
                   {student.age} anos
                 </span>
                 {student.phone && (
                   <>
-                    <span>•</span>
+                    <span className="text-slate-600">•</span>
                     <span className="flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-slate-500" />
+                      <Phone className="w-3 h-3 text-slate-500" />
                       {student.phone}
                     </span>
                   </>
                 )}
                 {student.email && (
                   <>
-                    <span>•</span>
+                    <span className="text-slate-600">•</span>
                     <span className="flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-slate-500" />
+                      <Mail className="w-3 h-3 text-slate-500" />
                       {student.email}
                     </span>
                   </>
@@ -141,30 +141,30 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
         </div>
 
         {/* Métricas Biométricas do Aluno */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6">
-          <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-5 sm:pt-6">
+          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
             <span className="text-xs text-slate-400 block mb-1">Peso Atual</span>
             <span className="text-xl font-bold text-white">{student.weight}</span>
             <span className="text-xs text-slate-400 font-normal ml-1">kg</span>
           </div>
 
-          <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
+          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
             <span className="text-xs text-slate-400 block mb-1">Altura</span>
             <span className="text-xl font-bold text-white">{student.height}</span>
             <span className="text-xs text-slate-400 font-normal ml-1">cm</span>
           </div>
 
-          <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
+          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
             <span className="text-xs text-slate-400 block mb-1">IMC Corporal</span>
             <div className="flex items-center justify-center gap-2">
               <span className={`text-xl font-bold ${bmiInfo.colorClass}`}>{bmiInfo.bmi}</span>
             </div>
-            <span className={`inline-block text-[10px] mt-0.5 px-2 py-0.2 rounded font-semibold ${bmiInfo.badgeText}`}>
+            <span className={`inline-block text-xs mt-0.5 px-2 py-0.5 rounded font-semibold ${bmiInfo.badgeText}`}>
               {bmiInfo.classification}
             </span>
           </div>
 
-          <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
+          <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-center">
             <span className="text-xs text-slate-400 block mb-1">Meta Hídrica Diária</span>
             <span className="text-xl font-bold text-sky-400">{waterTarget}</span>
             <span className="text-xs text-slate-400 font-normal ml-1">ml</span>
@@ -183,11 +183,11 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
         )}
       </div>
 
-        {/* Barra de Abas (Tabs) */}
-      <div className="flex items-center gap-2 border-b border-slate-800">
+      {/* Barra de Abas (Tabs) com scroll suave no mobile */}
+      <div className="flex items-center gap-1 sm:gap-2 border-b border-slate-800 overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap pb-px">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-3.5 sm:px-5 py-3 text-sm font-bold border-b-2 flex-shrink-0 transition-all ${
             activeTab === 'overview'
               ? 'border-emerald-500 text-emerald-400'
               : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -199,7 +199,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
 
         <button
           onClick={() => setActiveTab('workouts')}
-          className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-3.5 sm:px-5 py-3 text-sm font-bold border-b-2 flex-shrink-0 transition-all ${
             activeTab === 'workouts'
               ? 'border-emerald-500 text-emerald-400'
               : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -214,7 +214,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
 
         <button
           onClick={() => setActiveTab('diet')}
-          className={`flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-3.5 sm:px-5 py-3 text-sm font-bold border-b-2 flex-shrink-0 transition-all ${
             activeTab === 'diet'
               ? 'border-emerald-500 text-emerald-400'
               : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -322,7 +322,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({
                     </div>
                   ))}
                   {dietPlan.meals.length > 3 && (
-                    <p className="text-[11px] text-slate-400 text-center pt-1">
+                    <p className="text-xs text-slate-400 text-center pt-1">
                       + mais {dietPlan.meals.length - 3} refeições cadastradas
                     </p>
                   )}

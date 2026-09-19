@@ -104,36 +104,36 @@ export const StudentModal: React.FC<StudentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/40">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
-              <User className="w-5 h-5" />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Header Fixo */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-800 bg-slate-950/40 flex-shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
+              <User className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-base font-bold text-white">
                 {initialStudent ? 'Editar Aluno' : 'Cadastrar Novo Aluno'}
               </h2>
               <p className="text-xs text-slate-400">
-                Preencha os dados biométricos e objetivos de treino
+                Dados biométricos e objetivos de treino
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Formulário */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        {/* Formulário com rolagem interna suave no mobile */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {/* Nome Completo */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
               Nome Completo *
             </label>
             <input
@@ -141,7 +141,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Carlos Henrique Silva"
-              className={`w-full bg-slate-950/80 border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full bg-slate-950/80 border rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 transition-all ${
                 errors.name ? 'border-rose-500 focus:ring-rose-500/30' : 'border-slate-800 focus:border-emerald-500 focus:ring-emerald-500/20'
               }`}
             />
@@ -149,9 +149,9 @@ export const StudentModal: React.FC<StudentModalProps> = ({
           </div>
 
           {/* Dados Físicos: Idade, Peso, Altura */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                 Idade (anos) *
               </label>
               <input
@@ -161,7 +161,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 placeholder="Ex: 28"
                 min="10"
                 max="120"
-                className={`w-full bg-slate-950/80 border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 transition-all ${
+                className={`w-full bg-slate-950/80 border rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 transition-all ${
                   errors.age ? 'border-rose-500 focus:ring-rose-500/30' : 'border-slate-800 focus:border-emerald-500 focus:ring-emerald-500/20'
                 }`}
               />
@@ -169,7 +169,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                 Peso (kg) *
               </label>
               <input
@@ -178,7 +178,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={weight}
                 onChange={(e) => setWeight(e.target.value === '' ? '' : Number(e.target.value))}
                 placeholder="Ex: 75.5"
-                className={`w-full bg-slate-950/80 border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 transition-all ${
+                className={`w-full bg-slate-950/80 border rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 transition-all ${
                   errors.weight ? 'border-rose-500 focus:ring-rose-500/30' : 'border-slate-800 focus:border-emerald-500 focus:ring-emerald-500/20'
                 }`}
               />
@@ -186,7 +186,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                 Altura (cm) *
               </label>
               <input
@@ -194,7 +194,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={height}
                 onChange={(e) => setHeight(e.target.value === '' ? '' : Number(e.target.value))}
                 placeholder="Ex: 175"
-                className={`w-full bg-slate-950/80 border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 transition-all ${
+                className={`w-full bg-slate-950/80 border rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 transition-all ${
                   errors.height ? 'border-rose-500 focus:ring-rose-500/30' : 'border-slate-800 focus:border-emerald-500 focus:ring-emerald-500/20'
                 }`}
               />
@@ -204,35 +204,35 @@ export const StudentModal: React.FC<StudentModalProps> = ({
 
           {/* Pré-visualização Automática de IMC & Água */}
           {currentWeightNum > 0 && currentHeightNum > 0 && (
-            <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                  <Activity className="w-4 h-4" />
+            <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                  <Activity className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-slate-400">IMC Calculado:</span>
                     <span className={`font-bold text-sm ${bmiInfo.colorClass}`}>{bmiInfo.bmi}</span>
-                    <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${bmiInfo.badgeBg} ${bmiInfo.badgeText}`}>
+                    <span className={`px-2 py-0.2 rounded text-xs font-semibold border ${bmiInfo.badgeBg} ${bmiInfo.badgeText}`}>
                       {bmiInfo.classification}
                     </span>
                   </div>
-                  <p className="text-slate-400 mt-0.5">{bmiInfo.description}</p>
+                  <p className="text-slate-400 mt-0.5 text-xs">{bmiInfo.description}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 text-sky-400 bg-sky-950/40 border border-sky-800/40 px-3 py-1.5 rounded-lg whitespace-nowrap">
+              <div className="flex items-center gap-1.5 text-sky-400 bg-sky-950/40 border border-sky-800/40 px-2.5 py-1 rounded-lg text-xs whitespace-nowrap">
                 <Droplets className="w-3.5 h-3.5 text-sky-400" />
-                <span>Meta de água: <strong>{waterIntake} ml/dia</strong></span>
+                <span>Água: <strong>{waterIntake} ml/dia</strong></span>
               </div>
             </div>
           )}
 
           {/* Nível do Aluno (Iniciante, Intermediário, Avançado) */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
               Nível do Aluno *
             </label>
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               {LEVEL_OPTIONS.map((lvl) => {
                 const isSelected = level === lvl;
                 return (
@@ -240,7 +240,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     type="button"
                     key={lvl}
                     onClick={() => setLevel(lvl)}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all text-center flex items-center justify-center gap-1.5 ${
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold border transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
                       isSelected
                         ? lvl === 'Iniciante'
                           ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/60 shadow-lg shadow-emerald-950'
@@ -250,7 +250,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         : 'bg-slate-950/50 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
                     }`}
                   >
-                    {isSelected && <Check className="w-3.5 h-3.5" />}
+                    {isSelected && <Check className="w-3 h-3" />}
                     <span>{lvl}</span>
                   </button>
                 );
@@ -260,13 +260,13 @@ export const StudentModal: React.FC<StudentModalProps> = ({
 
           {/* Objetivo do Aluno */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
               Objetivo Principal *
             </label>
             <select
               value={goal}
               onChange={(e) => setGoal(e.target.value as StudentGoal)}
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
             >
               {GOAL_OPTIONS.map((g) => (
                 <option key={g} value={g} className="bg-slate-900 text-white">
@@ -277,9 +277,9 @@ export const StudentModal: React.FC<StudentModalProps> = ({
           </div>
 
           {/* Contato (Telefone e Email) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
                 Telefone / WhatsApp (Opcional)
               </label>
               <input
@@ -287,11 +287,11 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Ex: (11) 99999-8888"
-                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
                 E-mail (Opcional)
               </label>
               <input
@@ -299,14 +299,14 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Ex: aluno@email.com"
-                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
 
           {/* Restrições Médicas / Articulares */}
           <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-300 mb-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>Restrições Médicas / Lesões (Opcional)</span>
             </label>
@@ -314,37 +314,37 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               type="text"
               value={medicalConditions}
               onChange={(e) => setMedicalConditions(e.target.value)}
-              placeholder="Ex: Condromalácia patelar grau 2 no joelho esquerdo, evitar flexão profunda"
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-500/50"
+              placeholder="Ex: Condromalácia patelar grau 2 no joelho esquerdo"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-500/50"
             />
           </div>
 
           {/* Observações Gerais */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
               Observações Gerais (Opcional)
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ex: Disponibilidade para treinar 4x por semana. Prefere treinos mais curtos e intensos."
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 resize-none"
+              placeholder="Ex: Disponibilidade para treinar 4x por semana."
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 resize-none"
             />
           </div>
 
-          {/* Botões do Rodapé */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          {/* Botões do Rodapé Fixo */}
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-medium transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 text-sm font-bold shadow-lg shadow-emerald-950 transition-all hover:shadow-emerald-900/40"
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 text-xs font-bold shadow-lg shadow-emerald-950 transition-all cursor-pointer active:scale-95"
             >
               {initialStudent ? 'Salvar Alterações' : 'Cadastrar Aluno'}
             </button>

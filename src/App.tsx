@@ -301,7 +301,7 @@ export const App: React.FC = () => {
       />
 
       {/* Conteúdo Principal */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-8">
         {selectedStudent ? (
           /* Visualização da Ficha Completa do Aluno */
           <StudentProfile
@@ -321,13 +321,13 @@ export const App: React.FC = () => {
           /* Tela Inicial / Dashboard de Alunos */
           <div className="space-y-6">
             {/* Banner de Boas-Vindas */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 border border-slate-800 p-6 sm:p-8">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 border border-slate-800 p-5 sm:p-8">
               <div className="relative z-10 max-w-2xl">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-semibold mb-3">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>FitManage Full Stack • Conectado como {currentUser.username}</span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                <h1 className="text-2xl font-extrabold text-white tracking-tight">
                   Gestão Inteligente de Alunos & Prescrições
                 </h1>
                 <p className="text-sm text-slate-400 mt-2 leading-relaxed">
@@ -346,21 +346,21 @@ export const App: React.FC = () => {
             />
 
             {/* Barra de Busca e Filtros */}
-            <div className="bg-slate-900/70 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-slate-900/70 p-3.5 sm:p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
               {/* Campo de Busca */}
-              <div className="relative w-full sm:w-80">
+              <div className="relative w-full md:w-80">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar por nome, objetivo ou contato..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               {/* Filtros por Nível e Objetivo */}
-              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
+              <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-1 md:pb-0">
                 <div className="flex items-center gap-1.5 text-xs text-slate-400 whitespace-nowrap">
                   <Filter className="w-3.5 h-3.5" />
                   <span>Filtrar:</span>
@@ -369,7 +369,7 @@ export const App: React.FC = () => {
                 <select
                   value={levelFilter}
                   onChange={(e) => setLevelFilter(e.target.value as StudentLevel | 'Todos')}
-                  className="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
+                  className="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500 flex-1 sm:flex-initial"
                 >
                   <option value="Todos">Todos os Níveis</option>
                   <option value="Iniciante">Iniciantes</option>
@@ -380,7 +380,7 @@ export const App: React.FC = () => {
                 <select
                   value={goalFilter}
                   onChange={(e) => setGoalFilter(e.target.value as StudentGoal | 'Todos')}
-                  className="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
+                  className="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500 flex-1 sm:flex-initial"
                 >
                   <option value="Todos">Todos os Objetivos</option>
                   <option value="Hipertrofia">Hipertrofia</option>
